@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Add Employee</title>
+</head>
+<body>
+    <h1>Add Employee</h1>
+    <form id="addEmployeeForm">
+        {% csrf_token %}
+        Name: <input type="text" id="name" name="name"><br>
+        Phone Number: <input type="text" id="phone_number" name="phone_number"><br>
+        Department: <input type="text" id="department" name="department"><br>
+        Salary: <input type="text" id="salary" name="salary"><br>
+        <button type="submit">Add Employee</button>
+        <div id="error-message" style="color: red;"></div>
+    </form>
+    
+    <script>
+        document.getElementById('addEmployeeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            fetch("{% url 'add_employee' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    name: document.getElementById('name').value,
+                    phone_number: document.getElementById('phone_number').value,
+                    department: document.getElementById('department').value,
+                    salary: document.getElementById('salary').value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Employee added successfully') {
+                    window.location.href = "{% url 'employee_list' %}";
+                } else {
+                    document.getElementById('error-message').innerText = data.message;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

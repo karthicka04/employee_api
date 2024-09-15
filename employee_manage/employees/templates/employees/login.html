@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form id="loginForm">
+        {% csrf_token %}
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+        <button type="submit">Login</button>
+        <div id="error-message" style="color: red;"></div>
+    </form>
+    
+    <script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        fetch('{% url "login" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Login successful') {
+                window.location.href = "{% url 'employee_list' %}";
+            } else {
+                document.getElementById('error-message').innerText = data.message;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('error-message').innerText = 'An error occurred.';
+        });
+    });
+    </script>
+    <a href="{% url 'signup' %}">Don't have an account? Sign up</a>
+</body>
+</html>

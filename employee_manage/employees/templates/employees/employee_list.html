@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 5px 0;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: blue;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Employee List</h1>
+    <ul>
+        {% for employee in employees %}
+            <li>{{ employee.name }} - {{ employee.department }} - {{ employee.salary }}</li>
+        {% empty %}
+            <li>No employees found.</li>
+        {% endfor %}
+    </ul>
+    {% if user.is_superuser %}
+        <a href="{% url 'add_employee' %}">Add Employee</a>
+        <a href="{% url 'delete_employee' %}">Delete Employee</a>
+    {% endif %}
+</body>
+</html>
